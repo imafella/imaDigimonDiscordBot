@@ -12,6 +12,7 @@ from ThingyDo.Ascii import *
 from ThingyDo.GetGreeting import *
 from ThingyDo.DigimonKeywords import *
 from ThingyDo.DigimonIOAPI import *
+from ThingyDo.TimeingDefinitions import *
 
 intents = discord.Intents.all()
 load_dotenv()
@@ -36,6 +37,13 @@ async def on_member_join(member):
 	username = str(member.name)[:-5]
 	channel = get_channel(os.getenv("DISCORD_GENERAL"))
 	await channel.send(pickGreeting(username))
+
+@client.event
+async def on_ready():
+    await client.change_presence(activity=discord.Game(name='with nukes'))
+    
+    print('Connected to bot: {}'.format(client.user.name))
+    print('Bot ID: {}'.format(client.user.id))
 
 
 #
@@ -80,6 +88,14 @@ async def flip(ctx):
 async def search(ctx, arg):
 	channel = ctx.channel
 	await channel.send(searchInput(arg, api_url))
+
+@client.command(pass_context=True, name="timing")
+async def timing(ctx, message):
+	channel=ctx.channel
+	inTxt = ctx.message.content.split(" ")
+	toSearch = str(' '.join(inTxt[1:]))
+	await channel.send(pickTiming(toSearch))
+	await ctx.message.delete()
 
 #
 #
